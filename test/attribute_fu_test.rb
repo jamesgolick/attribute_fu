@@ -1,8 +1,7 @@
-require 'test/unit'
+require File.dirname(__FILE__)+'/test_helper'
 
 class AttributeFuTest < Test::Unit::TestCase
-  # Replace this with your real tests.
-  def test_this_plugin
+  def test_default
     flunk
-  end
+  end  
 end
