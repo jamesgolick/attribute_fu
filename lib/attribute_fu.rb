@@ -1,1 +1,3 @@
-# AttributeFu
+module AttributeFu
+  
+end

@@ -28,13 +28,13 @@ class PhotoTest < ActiveSupport::TestCase
     
     context "with new hash" do
       should "create new comment" do
-        assert @photo.comments.any? { |comment| comment.author == "George-Michael" && comment.body =~ "was going to smoke" }, "New comment was not created."
+        assert @photo.comments.any? { |comment| comment.author == "George-Michael" && comment.body =~ /was going to smoke/i }, "New comment was not created."
       end
     end
     
     context "with remove hash" do
       should "remove those children from the parent" do
-        assert @photo.comments.any? { |comment| comment.author == "Bob Loblaw" }, "Comment in remove array was not removed."
+        assert !@photo.comments.any? { |comment| comment.author == "Bob Loblaw" }, "Comment in remove array was not removed."
       end
     end
   end
