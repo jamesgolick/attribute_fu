@@ -32,9 +32,9 @@ module AttributeFu
 
         attributes.symbolize_keys!
         attributes.delete(:new).each { |index, new_attrs| association.build new_attrs } if attributes.has_key?(:new)
-        instance_variable_set removal_variable_name(association_id), attributes.delete(:remove) if attributes.has_key?(:remove)
         
-        attributes.stringify_keys!
+        attributes.stringify_keys!        
+        instance_variable_set removal_variable_name(association_id), association.reject { |object| object.new_record? || attributes.has_key?(object.id.to_s) }.map(&:id)
         attributes.each do |id, object_attrs|
           object = association.detect { |associated| associated.id.to_s == id }
           object.attributes = object_attrs unless object.nil?
@@ -46,9 +46,10 @@ module AttributeFu
           association = send(association_id)
           association.each(&:save)
           
-          objects_to_remove = instance_variable_get removal_variable_name(association_id)
-          objects_to_remove.each { |remove_id| association.delete association.detect { |obj| obj.id.to_s == remove_id.to_s } }
-          instance_variable_set removal_variable_name(association_id), nil
+          unless (objects_to_remove = instance_variable_get removal_variable_name(association_id)).nil?
+            objects_to_remove.each { |remove_id| association.delete association.detect { |obj| obj.id.to_s == remove_id.to_s } }
+            instance_variable_set removal_variable_name(association_id), nil
+          end
         end
       end
       
