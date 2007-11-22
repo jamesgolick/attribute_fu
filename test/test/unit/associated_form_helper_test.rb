@@ -16,33 +16,53 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     stubs(:protect_against_forgery?).returns false
   end
     
-  context "with existing object" do
-    setup do
-      @photo.comments.create :author => "Barry", :body => "Oooh I did good today..."
-      
-      @erbout = assoc_output @photo.comments.first
+  context "fields for associated" do
+    context "with existing object" do
+      setup do
+        @photo.comments.create :author => "Barry", :body => "Oooh I did good today..."
+
+        @erbout = assoc_output @photo.comments.first
+      end
+
+      should "name field with attribute_fu naming conventions" do
+        assert_match "photo[comment_attributes][#{@photo.comments.first.id}]", @erbout
+      end
     end
-    
-    should "name field with attribute_fu naming conventions" do
-      assert_match "photo[comment_attributes][#{@photo.comments.first.id}]", @erbout
+
+    context "with non-existent object" do
+      setup do      
+        @erbout = assoc_output(@photo.comments.build) do |f|
+          f.fields_for_associated(:comment, @photo.comments.build) do |comment|
+            comment.text_field(:author)
+          end
+        end
+      end
+
+      should "name field with attribute_fu naming conventions" do
+        assert_match "photo[comment_attributes][new][0]", @erbout
+      end
+
+      should "maintain the numbering of the new object if called again" do
+          assert_match "photo[comment_attributes][new][1]", @erbout
+      end
     end
   end
   
-  context "with non-existent object" do
-    setup do      
+  context "remove link" do
+    setup do
       @erbout = assoc_output(@photo.comments.build) do |f|
         f.fields_for_associated(:comment, @photo.comments.build) do |comment|
-          comment.text_field(:author)
+          comment.remove_link "remove"
         end
       end
     end
-    
-    should "name field with attribute_fu naming conventions" do
-      assert_match "photo[comment_attributes][new][0]", @erbout
-    end
 
-    should "maintain the numbering of the new object if called again" do
-        assert_match "photo[comment_attributes][new][1]", @erbout
+    should "create a link" do
+      assert_match ">remove</a>", @erbout
+    end
+    
+    should "infer the name of the current @object in fields_for" do
+      assert_match "$(this).up(&quot;.comment&quot;).remove()", @erbout
     end
   end
   
