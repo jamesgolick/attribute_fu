@@ -4,17 +4,17 @@ module AttributeFu
     def self.included(base)
       base.class_eval do
         extend ClassMethods
-        class_inheritable_accessor  :managed_child_attributes
-        write_inheritable_attribute :managed_child_attributes, []
+        class_inheritable_accessor  :managed_association_attributes
+        write_inheritable_attribute :managed_association_attributes, []
         
-        after_update :save_managed_children
+        after_update :save_managed_associations
       end
     end
     
     def method_missing(method_name, *args)
       if method_name.to_s =~ /.+?\_attributes=/
         association_name = method_name.to_s.gsub '_attributes=', ''
-        association      = managed_child_attributes.detect { |element| element == association_name.to_sym } || managed_child_attributes.detect { |element| element == association_name.pluralize.to_sym }
+        association      = managed_association_attributes.detect { |element| element == association_name.to_sym } || managed_association_attributes.detect { |element| element == association_name.pluralize.to_sym }
         
         unless association.nil?
           has_many_attributes association, args.first
@@ -42,8 +42,8 @@ module AttributeFu
         end
       end
       
-      def save_managed_children
-        managed_child_attributes.each do |association_id|
+      def save_managed_associations
+        managed_association_attributes.each do |association_id|
           association = send(association_id)
           association.each(&:save)
           
@@ -61,7 +61,7 @@ module AttributeFu
     module ClassMethods
       def has_many(association_id, options = {}, &extension)
         unless (config = options.delete(:attributes)).nil?
-          self.managed_child_attributes << association_id
+          self.managed_association_attributes << association_id
         end
         
         super
