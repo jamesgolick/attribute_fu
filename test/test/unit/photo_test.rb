@@ -53,6 +53,18 @@ class PhotoTest < ActiveSupport::TestCase
           end
         end
       end
+      
+      context "with comment_attributes = nil" do
+        setup do
+          @photo.save
+          @photo.comment_attributes = nil
+          @photo.save
+        end
+
+        should "remove all comments" do
+          assert @photo.comments.empty?, "one or more comments not removed: #{@photo.comments.inspect}"
+        end
+      end
     end
     
     context "updating with invalid children" do

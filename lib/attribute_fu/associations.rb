@@ -29,6 +29,7 @@ module AttributeFu
     private
       def has_many_attributes(association_id, attributes)
         association = send(association_id)
+        attributes = {} unless attributes.is_a? Hash
 
         attributes.symbolize_keys!
         attributes.delete(:new).each { |index, new_attrs| association.build new_attrs } if attributes.has_key?(:new)
