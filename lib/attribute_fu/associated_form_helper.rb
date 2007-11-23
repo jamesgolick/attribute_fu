@@ -16,7 +16,7 @@ module AttributeFu
       @template.fields_for(name, *args, &block)
     end
     
-    def remove_link(name, *args, &block)
+    def remove_link(name, *args)
       options = args.extract_options!
 
       css_selector = options.delete(:selector) || ".#{@object.class.name.underscore}"
@@ -24,7 +24,7 @@ module AttributeFu
       
       function << "$(this).up(&quot;#{css_selector}&quot;).remove()"
       
-      @template.link_to_function(name, function, *args.push(options), &block)
+      @template.link_to_function(name, function, *args.push(options))
     end
   end
 end

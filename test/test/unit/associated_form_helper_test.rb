@@ -49,20 +49,43 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
   end
   
   context "remove link" do
-    setup do
-      @erbout = assoc_output(@photo.comments.build) do |f|
-        f.fields_for_associated(:comment, @photo.comments.build) do |comment|
-          comment.remove_link "remove"
-        end
+    context "with just a name" do
+      setup do
+        remove_link "remove"
+      end
+
+      should "create a link" do
+        assert_match ">remove</a>", @erbout
+      end
+
+      should "infer the name of the current @object in fields_for" do
+        assert_match "$(this).up(&quot;.comment&quot;).remove()", @erbout
       end
     end
+    
+    context "with an alternate CSS selector" do
+      setup do
+        remove_link "remove", :selector => '.blah'
+      end
 
-    should "create a link" do
-      assert_match ">remove</a>", @erbout
+      should "use the alternate selector" do
+        assert_match "$(this).up(&quot;.blah&quot;).remove()", @erbout
+      end
     end
     
-    should "infer the name of the current @object in fields_for" do
-      assert_match "$(this).up(&quot;.comment&quot;).remove()", @erbout
+    context "with an extra function" do
+      setup do
+        @other_function = "$('asdf').blah();"
+        remove_link "remove", :function => @other_function
+      end
+
+      should "still infer the name of the current @object in fields_for, and create the function as usual" do
+        assert_match "$(this).up(&quot;.comment&quot;).remove()", @erbout
+      end
+      
+      should "append the secondary function" do
+        assert_match @other_function, @erbout
+      end
     end
   end
   
@@ -78,5 +101,13 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
       
       _erbout
+    end
+    
+    def remove_link(*args)
+      @erbout = assoc_output(@photo.comments.build) do |f|
+        f.fields_for_associated(:comment, @photo.comments.build) do |comment|
+          comment.remove_link *args
+        end
+      end
     end
 end
