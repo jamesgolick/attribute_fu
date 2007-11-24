@@ -89,26 +89,6 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
   end
   
-  context "ensure_submission_of_associated" do
-    setup do
-      @erbout = assoc_output(@photo.comments.build) do |f|
-        f.ensure_submission_of_associated(:comment, @photo.comments.build)
-      end
-    end
-
-    should "create hidden field" do
-      assert_match 'type="hidden"', @erbout
-    end
-    
-    should "set value to blank" do
-      assert_match 'value=""', @erbout
-    end
-    
-    should "be named with convention" do
-      assert_match 'name="photo[comment_attributes]"', @erbout
-    end
-  end
-  
   private
     def assoc_output(comment, &block)
       _erbout = ''

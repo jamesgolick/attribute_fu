@@ -13,14 +13,7 @@ module AttributeFu
         name << "[new][#{@new_objects[associated_name]+=1}]"
       end
       
-      
-      ensure_submission_of_associated(associated_name)
       @template.fields_for(name, *args, &block)
-    end
-    
-    def ensure_submission_of_associated(associated_name, object = nil)
-      name = associated_base_name associated_name
-      @template.tag("input", :type => "hidden", :name => name, :value => "")
     end
     
     def remove_link(name, *args)
