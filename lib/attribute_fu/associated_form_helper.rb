@@ -3,14 +3,16 @@ module AttributeFu
     def fields_for_associated(associated_name, *args, &block)
       object = args.first
       name   = associated_base_name associated_name
+      conf   = args.last if args.last.is_a? Hash
       
       unless object.new_record?
         name << "[#{object.new_record? ? 'new' : object.id}]"
       else
         @new_objects ||= {}
         @new_objects[associated_name] ||= -1 # we want naming to start at 0
+        identifier = !conf.nil? && conf[:javascript] ? "%number%" : @new_objects[associated_name]+=1
         
-        name << "[new][#{@new_objects[associated_name]+=1}]"
+        name << "[new][#{identifier}]"
       end
       
       @template.fields_for(name, *args, &block)

@@ -89,6 +89,23 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
   end
   
+  context "with javascript flag" do
+    setup do
+      _erbout = ''
+      fields_for(:photo) do |f|
+        _erbout.concat(f.fields_for_associated(:comment, @photo.comments.build, :javascript => true) do |comment|
+          comment.text_field(:author)
+        end)
+      end
+      
+      @erbout = _erbout
+    end
+    
+    should "use placeholders instead of numbers" do
+      assert_match "photo[comment_attributes][new][%number%]", @erbout
+    end
+  end
+  
   private
     def assoc_output(comment, &block)
       _erbout = ''
