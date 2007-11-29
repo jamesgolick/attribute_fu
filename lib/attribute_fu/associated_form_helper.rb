@@ -31,13 +31,13 @@ module AttributeFu
     
     def add_associated_link(name, object)
       associated_name  = object.class.name.underscore
+      container        = associated_name.pluralize
       variable         = "attribute_fu_#{associated_name}_count"
-      parent_container = associated_name.to_s.pluralize
       form_builder     = self # because the value of self changes in the block
       
       @template.link_to_function name do |page|
         page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
-        page << "new Insertion.Bottom('#{parent_container}', new Template("+render(:partial => "#{associated_name}", :locals => {associated_name.to_sym => object, :f => form_builder}).to_json+").evaluate({'number': --#{variable}}))"
+        page << "new Insertion.Bottom('#{container}', new Template("+render(:partial => "#{associated_name}", :locals => {associated_name.to_sym => object, :f => form_builder}).to_json+").evaluate({'number': --#{variable}}))"
       end
     end
     
