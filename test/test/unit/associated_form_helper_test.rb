@@ -135,6 +135,13 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     should "name the variable correctly" do
       assert_match "attribute_fu_comment_count", @erbout
     end
+    
+    should "produce the following link" do
+      # this is a way of testing the whole link
+      assert_equal %{
+        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('comments', new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
+      }.strip, @erbout
+    end
   end
   
   private
