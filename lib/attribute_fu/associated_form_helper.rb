@@ -29,10 +29,11 @@ module AttributeFu
       @template.link_to_function(name, function, *args.push(options))
     end
     
-    def add_associated_link(name, associated_name, object)
+    def add_associated_link(name, object)
+      associated_name  = object.class.name.underscore
       variable         = "attribute_fu_#{associated_name}_count"
       parent_container = associated_name.to_s.pluralize
-      form_builder     = self
+      form_builder     = self # because the value of self changes in the block
       
       @template.link_to_function name do |page|
         page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"

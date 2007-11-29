@@ -106,14 +106,14 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
   end
   
-  context "add_associated_link" do
+  context "add_associated_link " do
     setup do
       comment = @photo.comments.build
       
       _erbout = ''
       fields_for(:photo) do |f|
         nil.stubs(:render).with(:partial => "comment", :locals => {:comment => comment, :f => f}) # which object am I really supposed to mock here????
-        _erbout.concat f.add_associated_link("Add Comment", :comment, comment)
+        _erbout.concat f.add_associated_link("Add Comment", comment)
       end
       
       @erbout = _erbout
