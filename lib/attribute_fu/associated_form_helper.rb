@@ -41,7 +41,16 @@ module AttributeFu
       
       @template.link_to_function name do |page|
         page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
-        page << "new Insertion.Bottom('#{container}', new Template("+render(:partial => "#{partial}", :locals => {associated_name.to_sym => object, :f => form_builder}).to_json+").evaluate({'number': --#{variable}}))"
+        page << "new Insertion.Bottom('#{container}', new Template("+form_builder.render_associated_form(object, :javascript => true).to_json+").evaluate({'number': --#{variable}}))"
+      end
+    end
+    
+    def render_associated_form(associated, fields_for_args = {}, render_args = {})
+      associated_name  = associated.class.name.underscore
+      render_args.symbolize_keys!
+      
+      fields_for_associated(associated, fields_for_args) do |f|
+        @template.render({:partial => "#{associated_name}", :locals => {associated_name.to_sym => associated, :f => f}.merge(render_args.delete(:locals) || {})}.merge(render_args))
       end
     end
     

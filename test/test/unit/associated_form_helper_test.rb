@@ -112,7 +112,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       
       _erbout = ''
       fields_for(:photo) do |f|
-        nil.stubs(:render).with(:partial => "comment", :locals => {:comment => comment, :f => f}) # which object am I really supposed to mock here????
+        f.stubs(:render_associated_form).with(comment, :javascript => true)
         _erbout.concat f.add_associated_link("Add Comment", comment)
       end
       
@@ -150,7 +150,8 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       
       _erbout = ''
       fields_for(:photo) do |f|
-        nil.stubs(:render).with(:partial => "some_other_partial", :locals => {:comment => comment, :f => f}) # which object am I really supposed to mock here????
+        # self.stubs(:render).with(:partial => "some_other_partial", :locals => {:comment => comment, :f => f}) # which object am I really supposed to mock here????
+        f.stubs(:render_associated_form).with(comment, :javascript => true)
         _erbout.concat f.add_associated_link("Add Comment", comment, :container => 'something_comments', :partial => 'some_other_partial')
       end
       
