@@ -11,7 +11,8 @@ class PhotoTest < ActiveSupport::TestCase
         @bob = @photo.comments.create :author => "Bob Loblaw", :body => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed..."
       
         @photo.comment_attributes = { @gob.id.to_s => { :author => "Buster Bluth", :body => "I said it was _our_ nausia..." },
-                                      :new         => { "0" => { :author => "George-Michael", :body => "I was going to smoke the marijuana like a ciggarette." }}}
+                                      :new         => { "0" => { :author => "George-Michael", :body => "I was going to smoke the marijuana like a ciggarette." },
+                                                        "-1" => { :author => "Tobias Funke", :body => "I am an actor! An actor for crying out loud!" }}}
       
       end
     
@@ -45,11 +46,15 @@ class PhotoTest < ActiveSupport::TestCase
           should "create new comment" do
             assert @photo.comments.any? { |comment| comment.author == "George-Michael" && comment.body =~ /was going to smoke/i }, "New comment was not created."
           end
+          
+          should "order the negatives after the positives" do
+            assert_equal "Tobias Funke", @photo.comments.last.author, "Tobias is not the last comment: #{@photo.comments.inspect}"
+          end
         end
     
         context "with missing associated" do
           should "remove those children from the parent" do
-            assert !@photo.comments.any? { |comment| comment.author == "Bob Loblaw" }, "Comment in remove array was not removed."
+            assert !@photo.comments.any? { |comment| comment.author == "Bob Loblaw" }, "Comment not included was not removed."
           end
         end
       end

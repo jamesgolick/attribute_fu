@@ -32,7 +32,16 @@ module AttributeFu
         attributes = {} unless attributes.is_a? Hash
 
         attributes.symbolize_keys!
-        attributes.delete(:new).each { |index, new_attrs| association.build new_attrs } if attributes.has_key?(:new)
+        
+        if attributes.has_key?(:new)
+          new_attrs = attributes.delete(:new)
+          new_attrs = new_attrs.sort do |a,b|
+            value = lambda { |i| i < 0 ? i.abs + new_attrs.length : i }
+            
+            value.call(a.first.to_i) <=> value.call(b.first.to_i)
+          end
+          new_attrs.each { |i, new_attrs| association.build new_attrs } 
+        end
         
         attributes.stringify_keys!        
         instance_variable_set removal_variable_name(association_id), association.reject { |object| object.new_record? || attributes.has_key?(object.id.to_s) }.map(&:id)
