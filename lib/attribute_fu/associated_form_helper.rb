@@ -46,11 +46,17 @@ module AttributeFu
     end
     
     def render_associated_form(associated, fields_for_args = {}, render_args = {})
-      associated_name  = associated.class.name.underscore
-      render_args.symbolize_keys!
-      
-      fields_for_associated(associated, fields_for_args) do |f|
-        @template.render({:partial => "#{associated_name}", :locals => {associated_name.to_sym => associated, :f => f}.merge(render_args.delete(:locals) || {})}.merge(render_args))
+      associated = [*associated]
+
+      unless associated.empty?
+        associated_name = associated.first.class.name.underscore
+        
+        render_args.symbolize_keys!      
+        associated.map do |element|
+          fields_for_associated(element, fields_for_args) do |f|
+            @template.render({:partial => "#{associated_name}", :locals => {associated_name.to_sym => element, :f => f}.merge(render_args.delete(:locals) || {})}.merge(render_args))
+          end
+        end
       end
     end
     
