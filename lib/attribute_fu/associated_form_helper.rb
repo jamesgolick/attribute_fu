@@ -29,6 +29,17 @@ module AttributeFu
       @template.link_to_function(name, function, *args.push(options))
     end
     
+    def add_associated_link(name, associated_name, object)
+      variable         = "attribute_fu_#{associated_name}_count"
+      parent_container = associated_name.to_s.pluralize
+      form_builder     = self
+      
+      @template.link_to_function name do |page|
+        page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
+        page << "new Insertion.Bottom('#{parent_container}', new Template("+render(:partial => "#{associated_name}", :locals => {associated_name.to_sym => object, :f => form_builder}).to_json+").evaluate({'number': --#{variable}}))"
+      end
+    end
+    
     private
       def associated_base_name(associated_name)
         "#{@object_name}[#{associated_name}_attributes]"
