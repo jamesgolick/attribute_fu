@@ -150,7 +150,6 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       
       _erbout = ''
       fields_for(:photo) do |f|
-        # self.stubs(:render).with(:partial => "some_other_partial", :locals => {:comment => comment, :f => f}) # which object am I really supposed to mock here????
         f.stubs(:render_associated_form).with(comment, :javascript => true)
         _erbout.concat f.add_associated_link("Add Comment", comment, :container => 'something_comments', :partial => 'some_other_partial')
       end
@@ -180,6 +179,48 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       assert_equal %{
         <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('something_comments', new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
       }.strip, @erbout
+    end
+  end
+  
+  context "render_associated_form" do
+    setup do
+      comment = @photo.comments.build
+      
+      associated_form_builder = mock()
+      
+      _erbout = ''
+      fields_for(:photo) do |f|
+        f.stubs(:fields_for_associated).yields(associated_form_builder)
+        expects(:render).with(:partial => "comment", :locals => { :comment => comment, :f => associated_form_builder })
+        _erbout.concat f.render_associated_form(comment).to_s
+      end
+      
+      @erbout = _erbout
+    end
+    
+    should "extract the correct parameters for render" do
+      # assertions in mock
+    end
+  end
+  
+  context "render_associated_form with specified partial name" do
+    setup do
+      comment = @photo.comments.build
+      
+      associated_form_builder = mock()
+      
+      _erbout = ''
+      fields_for(:photo) do |f|
+        f.stubs(:fields_for_associated).yields(associated_form_builder)
+        expects(:render).with(:partial => "somewhere/something.html.erb", :locals => { :something => comment, :f => associated_form_builder })
+        _erbout.concat f.render_associated_form(comment, :partial => "somewhere/something.html.erb").to_s
+      end
+      
+      @erbout = _erbout
+    end
+    
+    should "extract the correct parameters for render" do
+      # assertions in mock
     end
   end
   

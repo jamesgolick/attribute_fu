@@ -45,16 +45,17 @@ module AttributeFu
       end
     end
     
-    def render_associated_form(associated, fields_for_args = {}, render_args = {})
+    def render_associated_form(associated, args = {})
       associated = associated.is_a?(Array) ? associated : [associated] # preserve association proxy if this is one
 
       unless associated.empty?
-        associated_name = associated.first.class.name.underscore
-        
-        render_args.symbolize_keys!      
+        args.symbolize_keys!
+        partial           = args[:partial] || associated.first.class.name.underscore
+        local_assign_name = args[:partial] ? partial.split('/').last.split('.').first : associated.first.class.name.underscore
+
         associated.map do |element|
-          fields_for_associated(element, fields_for_args) do |f|
-            @template.render({:partial => "#{associated_name}", :locals => {associated_name.to_sym => element, :f => f}.merge(render_args.delete(:locals) || {})}.merge(render_args))
+          fields_for_associated(element, args[:fields_for]) do |f|
+            @template.render({:partial => "#{partial}", :locals => {local_assign_name.to_sym => element, :f => f}.merge(args[:locals] || {})}.merge(args[:render] || {}))
           end
         end
       end
