@@ -46,7 +46,7 @@ module AttributeFu
     end
     
     def render_associated_form(associated, fields_for_args = {}, render_args = {})
-      associated = [*associated]
+      associated = associated.is_a?(Array) ? associated : [associated] # preserve association proxy if this is one
 
       unless associated.empty?
         associated_name = associated.first.class.name.underscore
