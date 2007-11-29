@@ -29,15 +29,19 @@ module AttributeFu
       @template.link_to_function(name, function, *args.push(options))
     end
     
-    def add_associated_link(name, object)
+    def add_associated_link(name, object, opts = {})
       associated_name  = object.class.name.underscore
-      container        = associated_name.pluralize
       variable         = "attribute_fu_#{associated_name}_count"
+      
+      opts.symbolize_keys!
+      partial          = opts[:partial]   || associated_name
+      container        = opts[:container] || associated_name.pluralize
+      
       form_builder     = self # because the value of self changes in the block
       
       @template.link_to_function name do |page|
         page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
-        page << "new Insertion.Bottom('#{container}', new Template("+render(:partial => "#{associated_name}", :locals => {associated_name.to_sym => object, :f => form_builder}).to_json+").evaluate({'number': --#{variable}}))"
+        page << "new Insertion.Bottom('#{container}', new Template("+render(:partial => "#{partial}", :locals => {associated_name.to_sym => object, :f => form_builder}).to_json+").evaluate({'number': --#{variable}}))"
       end
     end
     

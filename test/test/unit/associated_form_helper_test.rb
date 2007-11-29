@@ -144,6 +144,44 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
   end
   
+  context "add_associated_link with parameters" do
+    setup do
+      comment = @photo.comments.build
+      
+      _erbout = ''
+      fields_for(:photo) do |f|
+        nil.stubs(:render).with(:partial => "some_other_partial", :locals => {:comment => comment, :f => f}) # which object am I really supposed to mock here????
+        _erbout.concat f.add_associated_link("Add Comment", comment, :container => 'something_comments', :partial => 'some_other_partial')
+      end
+      
+      @erbout = _erbout
+    end
+
+    should "create link" do
+      assert_match ">Add Comment</a>", @erbout
+    end
+    
+    should "insert into the bottom of the container specified" do
+      assert_match "Insertion.Bottom('something_comments'", @erbout
+    end
+    
+    should "wrap the partial in a prototype template" do
+      assert_match "new Template", @erbout
+      assert_match "evaluate", @erbout
+    end
+    
+    should "name the variable correctly" do
+      assert_match "attribute_fu_comment_count", @erbout
+    end
+    
+    should "produce the following link" do
+      # this is a way of testing the whole link
+      assert_equal %{
+        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('something_comments', new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
+      }.strip, @erbout
+    end
+  end
+  
   private
     def assoc_output(comment, &block)
       _erbout = ''
