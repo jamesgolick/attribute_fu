@@ -32,7 +32,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     context "with non-existent object" do
       setup do      
         @erbout = assoc_output(@photo.comments.build) do |f|
-          f.fields_for_associated(:comment, @photo.comments.build) do |comment|
+          f.fields_for_associated(@photo.comments.build) do |comment|
             comment.text_field(:author)
           end
         end
@@ -93,7 +93,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     setup do
       _erbout = ''
       fields_for(:photo) do |f|
-        _erbout.concat(f.fields_for_associated(:comment, @photo.comments.build, :javascript => true) do |comment|
+        _erbout.concat(f.fields_for_associated(@photo.comments.build, :javascript => true) do |comment|
           comment.text_field(:author)
         end)
       end
@@ -186,7 +186,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     def assoc_output(comment, &block)
       _erbout = ''
       fields_for(:photo) do |f|
-        _erbout.concat(f.fields_for_associated(:comment, comment) do |comment|
+        _erbout.concat(f.fields_for_associated(comment) do |comment|
           comment.text_field(:author)
         end)
         
@@ -198,7 +198,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     
     def remove_link(*args)
       @erbout = assoc_output(@photo.comments.build) do |f|
-        f.fields_for_associated(:comment, @photo.comments.build) do |comment|
+        f.fields_for_associated(@photo.comments.build) do |comment|
           comment.remove_link *args
         end
       end

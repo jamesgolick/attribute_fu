@@ -1,12 +1,12 @@
 module AttributeFu
   module AssociatedFormHelper
-    def fields_for_associated(associated_name, *args, &block)
-      object = args.first
-      name   = associated_base_name associated_name
-      conf   = args.last if args.last.is_a? Hash
+    def fields_for_associated(associated, *args, &block)
+      associated_name = associated.class.name.underscore
+      name            = associated_base_name associated_name
+      conf            = args.last if args.last.is_a? Hash
       
-      unless object.new_record?
-        name << "[#{object.new_record? ? 'new' : object.id}]"
+      unless associated.new_record?
+        name << "[#{associated.new_record? ? 'new' : associated.id}]"
       else
         @new_objects ||= {}
         @new_objects[associated_name] ||= -1 # we want naming to start at 0
@@ -15,7 +15,7 @@ module AttributeFu
         name << "[new][#{identifier}]"
       end
       
-      @template.fields_for(name, *args, &block)
+      @template.fields_for(name, *args.unshift(associated), &block)
     end
     
     def remove_link(name, *args)
