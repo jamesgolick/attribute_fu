@@ -102,7 +102,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
     
     should "use placeholders instead of numbers" do
-      assert_match "photo[comment_attributes][new][%number%]", @erbout
+      assert_match 'photo[comment_attributes][new][#{number}]', @erbout
     end
   end
   

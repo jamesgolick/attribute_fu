@@ -10,7 +10,7 @@ module AttributeFu
       else
         @new_objects ||= {}
         @new_objects[associated_name] ||= -1 # we want naming to start at 0
-        identifier = !conf.nil? && conf[:javascript] ? "%number%" : @new_objects[associated_name]+=1
+        identifier = !conf.nil? && conf[:javascript] ? '#{number}' : @new_objects[associated_name]+=1
         
         name << "[new][#{identifier}]"
       end
