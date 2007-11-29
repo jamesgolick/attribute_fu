@@ -47,9 +47,11 @@ module AttributeFu
     
     def render_associated_form(associated, opts = {})
       associated = associated.is_a?(Array) ? associated : [associated] # preserve association proxy if this is one
+      
+      opts.symbolize_keys!
+      opts[:new].times { associated.build } if opts[:new]
 
       unless associated.empty?
-        opts.symbolize_keys!
         partial           = opts[:partial] || associated.first.class.name.underscore
         local_assign_name = opts[:partial] ? partial.split('/').last.split('.').first : associated.first.class.name.underscore
 
