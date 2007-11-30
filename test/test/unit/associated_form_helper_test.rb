@@ -248,6 +248,31 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
   end
   
+  context "render_associated_form with collection that already has a couple of new objects in it" do
+    setup do
+      associated_form_builder = mock()
+      2.times { @photo.comments.build }
+      new_comment = Comment.new
+      @photo.comments.expects(:build).returns(new_comment)
+      @photo.comments.stubs(:empty?).returns(false)
+      @photo.comments.stubs(:first).returns(new_comment)
+      @photo.comments.stubs(:map).yields(new_comment)
+      
+      _erbout = ''
+      fields_for(:photo) do |f|
+        f.stubs(:fields_for_associated).yields(associated_form_builder)
+        expects(:render).with(:partial => "comment", :locals => { :comment => new_comment, :f => associated_form_builder })
+        _erbout.concat f.render_associated_form(@photo.comments, :new => 3).to_s
+      end
+      
+      @erbout = _erbout
+    end
+    
+    should "extract the correct parameters for render" do
+      # assertions in mock
+    end
+  end
+  
   private
     def assoc_output(comment, &block)
       _erbout = ''

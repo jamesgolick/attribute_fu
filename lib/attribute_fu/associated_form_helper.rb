@@ -49,7 +49,7 @@ module AttributeFu
       associated = associated.is_a?(Array) ? associated : [associated] # preserve association proxy if this is one
       
       opts.symbolize_keys!
-      opts[:new].times { associated.build } if opts[:new]
+      (opts[:new] - associated.select(&:new_record?).length).times { associated.build } if opts[:new]
 
       unless associated.empty?
         partial           = opts[:partial] || associated.first.class.name.underscore
