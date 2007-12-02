@@ -1,5 +1,5 @@
 module AttributeFu
-  module Associations
+  module Associations #:nodoc:
     
     def self.included(base) #:nodoc:
       base.class_eval do
