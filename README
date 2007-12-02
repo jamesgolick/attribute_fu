@@ -53,9 +53,7 @@ If you follow certain conventions, rendering your associated model's form elemen
 Then, in your parent element's form, call the render_associated_form method on the form builder, with the collection of elements you'd like to render as the only argument.
 
   ## _form.html.erb
-  ...
   <%= f.render_associated_form(@project.tasks) %>
-  ...
   
 That call will render the partial named _task.html.erb with each element in the supplied collection of tasks, wrapping the partial in a form builder (fields_for) with all the necessary arguments to produce a hash that will satisfy the task_attributes method.
 
@@ -63,7 +61,7 @@ You may want to add a few blank tasks to the bottom of your form; no need to do 
 
   <%= f.render_associated_form(@project.tasks, :new => 3) %>
   
-Since this is Web2.0, no form would be complete without some DHTML add and remove buttons. Fortunately, there are some nifty helpers to create them for us. If each element in your associated form is wrapped in an HTML element with a class name corresponding to its type (i.e. .task), simply calling remove_link on the form builder in your _task partial will do the trick.
+Since this is Web2.0, no form would be complete without some DHTML add and remove buttons. Fortunately, there are some nifty helpers to create them for us. Simply calling remove_link on the form builder in your _task partial will do the trick.
 
   ## _task.html.erb
   <div class="task">
