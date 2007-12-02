@@ -4,6 +4,8 @@ module AttributeFu
     def self.included(base)
       base.class_eval do
         extend ClassMethods
+        class << self; alias_method_chain :has_many, :association_option; end
+        
         class_inheritable_accessor  :managed_association_attributes
         write_inheritable_attribute :managed_association_attributes, []
         
@@ -68,12 +70,12 @@ module AttributeFu
       end
     
     module ClassMethods
-      def has_many(association_id, options = {}, &extension)
+      def has_many_with_association_option(association_id, options = {}, &extension)
         unless (config = options.delete(:attributes)).nil?
           self.managed_association_attributes << association_id
         end
         
-        super
+        has_many_without_association_option(association_id, options, &extension)
       end
     end
     
