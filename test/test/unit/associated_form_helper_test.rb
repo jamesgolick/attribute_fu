@@ -290,6 +290,26 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
   end
   
+  context "render_associated_form with overridden name" do
+    setup do
+      associated_form_builder = mock()
+      comment = @photo.comments.build
+      
+      _erbout = ''
+      fields_for(:photo) do |f|
+        f.stubs(:fields_for_associated).with(comment, :name => 'something_else').yields(associated_form_builder)
+        expects(:render).with(:partial => "something_else", :locals => { :something_else => comment, :f => associated_form_builder })
+        _erbout.concat f.render_associated_form(@photo.comments, :name => :something_else).to_s
+      end
+      
+      @erbout = _erbout
+    end
+    
+    should "render with correct parameters" do
+      # assertions in mock
+    end
+  end
+  
   private
     def assoc_output(comment, &block)
       _erbout = ''

@@ -97,7 +97,8 @@ module AttributeFu
     # 
     # Options are:
     # * <tt>:new</tt>        - specify a certain number of new elements to be added to the form. Useful for displaying a 
-    #   few blank elements at the bottom. 
+    #   few blank elements at the bottom.
+    # * <tt>:name</tt>       - override the name of the association, both for the field names, and the name of the partial
     # * <tt>:partial</tt>    - specify the name of the partial in which the form is located.
     # * <tt>:fields_for</tt> - specify additional options for the fields_for_associated call
     # * <tt>:locals</tt>     - specify additional variables to be passed along to the partial
@@ -110,11 +111,12 @@ module AttributeFu
       (opts[:new] - associated.select(&:new_record?).length).times { associated.build } if opts[:new]
 
       unless associated.empty?
-        partial           = opts[:partial] || associated.first.class.name.underscore
-        local_assign_name = opts[:partial] ? partial.split('/').last.split('.').first : associated.first.class.name.underscore
+        name              = (opts[:name]   || associated.first.class.name.underscore).to_s
+        partial           = opts[:partial] || name
+        local_assign_name = partial.split('/').last.split('.').first
 
         associated.map do |element|
-          fields_for_associated(element, opts[:fields_for]) do |f|
+          fields_for_associated(element, (opts[:fields_for] || {}).merge(:name => name)) do |f|
             @template.render({:partial => "#{partial}", :locals => {local_assign_name.to_sym => element, :f => f}.merge(opts[:locals] || {})}.merge(opts[:render] || {}))
           end
         end
