@@ -43,7 +43,24 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "maintain the numbering of the new object if called again" do
-          assert_match "photo[comment_attributes][new][1]", @erbout
+        assert_match "photo[comment_attributes][new][1]", @erbout
+      end
+    end
+    
+    context "with overridden name" do
+      setup do
+        _erbout = ''
+        fields_for(:photo) do |f|
+          f.fields_for_associated(@photo.comments.build, :name => :something_else) do |comment|
+            _erbout.concat comment.text_field(:author)
+          end
+        end
+        
+        @erbout = _erbout
+      end
+
+      should "use override name" do
+        assert_dom_equal "<input name='photo[something_else_attributes][new][0][author]' size='30' type='text' id='photo_something_else_attributes__new__0_author' />", @erbout
       end
     end
   end

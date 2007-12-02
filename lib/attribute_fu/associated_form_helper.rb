@@ -8,17 +8,20 @@ module AttributeFu
     # 
     # Automatically names fields to be compatible with the association_attributes= created by attribute_fu.
     #
-    # Can be called with :javascript => true in order to generate id placeholders for use with 
-    # Prototype's Template class (this is how attribute_fu's add_associated_link works). 
+    # An options hash can be specified to override the default behaviors.
+    #
+    # Options are:
+    # <tt>:javascript</tt>  - Generate id placeholders for use with Prototype's Template class (this is how attribute_fu's add_associated_link works). 
+    # <tt>:name</tt>        - Specify the singular name of the association (in singular form), if it differs from the class name of the object.
     #
     # Any other supplied parameters are passed along to fields_for.
     # 
     # Note: It is preferable to call render_associated_form, which will automatically wrap your form partial in a fields_for_associated call.
     #
     def fields_for_associated(associated, *args, &block)
-      associated_name = associated.class.name.underscore
+      conf            = args.last.is_a?(Hash) ? args.last : {}
+      associated_name = (conf.delete(:name) || associated.class.name.underscore).to_s
       name            = associated_base_name associated_name
-      conf            = args.last if args.last.is_a? Hash
       
       unless associated.new_record?
         name << "[#{associated.new_record? ? 'new' : associated.id}]"
