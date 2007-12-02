@@ -1,4 +1,8 @@
 module AttributeFu
+  # Methods for building forms that contain fields for associated models.
+  #
+  # Refer to the Conventions section in the README for the various expected defaults.
+  #
   module AssociatedFormHelper
     # Works similarly to fields_for, but used for building forms for associated objects.
     # 
@@ -32,14 +36,6 @@ module AttributeFu
     # Creates a link for removing an associated element from the form, by removing its containing element from the DOM.
     #
     # Must be called from within an associated form.
-    #
-    # By default, expects the containing DOM element's class name to correspond to the (ruby) object's class name.
-    #
-    #   e.g. An instance of PhotoTag would have the class photo_tag.
-    #     
-    # In that example, the remove_link helper would produce the following javascript:
-    #
-    #   $(this).up('.photo_tag').remove();
     #     
     # An options hash can be specified to override the default behaviors.
     #
@@ -63,14 +59,6 @@ module AttributeFu
     # Creates a link that adds a new associated form to the page using Javascript.
     #
     # Must be called from within an associated form.
-    #
-    # Assumes that the containing element has an id which corresponds to the plural name of object's class.
-    #
-    #   e.g. If the object is an instance of Task, the container would have the DOM id #tasks
-    #
-    # The form is expected to be in a partial whose name corresponds to the singular name of the class.
-    #
-    #   e.g. The partial in the above example would be named _task.html.erb
     #
     # Must be provided with a new instance of the associated object.
     #
@@ -101,11 +89,6 @@ module AttributeFu
     # Renders the form of an associated object, wrapping it in a fields_for_associated call.
     #
     # The associated argument can be either an object, or a collection of objects to be rendered.
-    #
-    # As with the other attribute_fu methods, the form is expected to be in a partial whose name corresponds 
-    # with the object's singular class name.
-    #
-    #   i.e. An instance of Task's form would be in _task.html.erb
     #
     # An options hash can be specified to override the default behaviors.
     # 
