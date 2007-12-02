@@ -1,5 +1,16 @@
 module AttributeFu
   module AssociatedFormHelper
+    # Works similarly to fields_for, but used for building forms for associated objects.
+    # 
+    # Automatically names fields to be compatible with the association_attributes= created by attribute_fu.
+    #
+    # Can be called with :javascript => true in order to generate id placeholders for use with 
+    # Prototype's Template class (this is how attribute_fu's add_associated_link works). 
+    #
+    # Any other supplied parameters are passed along to fields_for.
+    # 
+    # Note: It is preferable to call render_associated_form, which will automatically wrap your form partial in a fields_for_associated call.
+    #
     def fields_for_associated(associated, *args, &block)
       associated_name = associated.class.name.underscore
       name            = associated_base_name associated_name
@@ -18,6 +29,26 @@ module AttributeFu
       @template.fields_for(name, *args.unshift(associated), &block)
     end
     
+    # Creates a link for removing an associated element from the form, by removing its containing element from the DOM.
+    #
+    # Must be called from within an associated form.
+    #
+    # By default, expects the containing DOM element's class name to correspond to the (ruby) object's class name.
+    #
+    #   e.g. An instance of PhotoTag would have the class photo_tag.
+    #     
+    # In that example, the remove_link helper would produce the following javascript:
+    #
+    #   $(this).up('.photo_tag').remove();
+    #     
+    # An options hash can be specified to override the default behaviors.
+    #
+    # Options are:
+    # * <tt>:selector</tt>  - The CSS selector with which to find the element to remove.
+    # * <tt>:function</tt>  - Additional javascript to be executed before the element is removed.
+    #
+    # Any remaining options are passed along to link_to_function
+    #
     def remove_link(name, *args)
       options = args.extract_options!
 
@@ -29,6 +60,28 @@ module AttributeFu
       @template.link_to_function(name, function, *args.push(options))
     end
     
+    # Creates a link that adds a new associated form to the page using Javascript.
+    #
+    # Must be called from within an associated form.
+    #
+    # Assumes that the containing element has an id which corresponds to the plural name of object's class.
+    #
+    #   e.g. If the object is an instance of Task, the container would have the DOM id #tasks
+    #
+    # The form is expected to be in a partial whose name corresponds to the singular name of the class.
+    #
+    #   e.g. The partial in the above example would be named _task.html.erb
+    #
+    # Must be provided with a new instance of the associated object.
+    #
+    #   e.g. f.add_associated_link 'Add Task', @project.tasks.build
+    #
+    # An options hash can be specified to override the default behaviors.
+    #
+    # Options are:
+    # * <tt>:partial</tt>    - specify the name of the partial in which the form is located.
+    # * <tt>:container</tt>  - specify the DOM id of the container in which to insert the new element.
+    #
     def add_associated_link(name, object, opts = {})
       associated_name  = object.class.name.underscore
       variable         = "attribute_fu_#{associated_name}_count"
@@ -45,6 +98,25 @@ module AttributeFu
       end
     end
     
+    # Renders the form of an associated object, wrapping it in a fields_for_associated call.
+    #
+    # The associated argument can be either an object, or a collection of objects to be rendered.
+    #
+    # As with the other attribute_fu methods, the form is expected to be in a partial whose name corresponds 
+    # with the object's singular class name.
+    #
+    #   i.e. An instance of Task's form would be in _task.html.erb
+    #
+    # An options hash can be specified to override the default behaviors.
+    # 
+    # Options are:
+    # * <tt>:new</tt>        - specify a certain number of new elements to be added to the form. Useful for displaying a 
+    #   few blank elements at the bottom. 
+    # * <tt>:partial</tt>    - specify the name of the partial in which the form is located.
+    # * <tt>:fields_for</tt> - specify additional options for the fields_for_associated call
+    # * <tt>:locals</tt>     - specify additional variables to be passed along to the partial
+    # * <td>:render</td>     - specify additional options to be passed along to the render :partial call
+    #
     def render_associated_form(associated, opts = {})
       associated = associated.is_a?(Array) ? associated : [associated] # preserve association proxy if this is one
       
