@@ -115,7 +115,7 @@ module AttributeFu
     # * <tt>:partial</tt>    - specify the name of the partial in which the form is located.
     # * <tt>:fields_for</tt> - specify additional options for the fields_for_associated call
     # * <tt>:locals</tt>     - specify additional variables to be passed along to the partial
-    # * <td>:render</td>     - specify additional options to be passed along to the render :partial call
+    # * <tt>:render</tt>     - specify additional options to be passed along to the render :partial call
     #
     def render_associated_form(associated, opts = {})
       associated = associated.is_a?(Array) ? associated : [associated] # preserve association proxy if this is one

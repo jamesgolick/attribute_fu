@@ -1,7 +1,7 @@
 module AttributeFu
   module Associations
     
-    def self.included(base)
+    def self.included(base) #:nodoc:
       base.class_eval do
         extend ClassMethods
         class << self; alias_method_chain :has_many, :association_option; end
@@ -13,7 +13,7 @@ module AttributeFu
       end
     end
     
-    def method_missing(method_name, *args)
+    def method_missing(method_name, *args) #:nodoc:
       if method_name.to_s =~ /.+?\_attributes=/
         association_name = method_name.to_s.gsub '_attributes=', ''
         association      = managed_association_attributes.detect { |element| element == association_name.to_sym } || managed_association_attributes.detect { |element| element == association_name.pluralize.to_sym }
@@ -29,7 +29,7 @@ module AttributeFu
     end
     
     private
-      def has_many_attributes(association_id, attributes)
+      def has_many_attributes(association_id, attributes) #:nodoc:
         association = send(association_id)
         attributes = {} unless attributes.is_a? Hash
 
@@ -53,7 +53,7 @@ module AttributeFu
         end
       end
       
-      def save_managed_associations
+      def save_managed_associations #:nodoc:
         managed_association_attributes.each do |association_id|
           association = send(association_id)
           association.each(&:save)
@@ -65,11 +65,28 @@ module AttributeFu
         end
       end
       
-      def removal_variable_name(association_id)
+      def removal_variable_name(association_id) #:nodoc:
         "@#{association_id.to_s.pluralize}_to_remove"
       end
     
     module ClassMethods
+      
+      # Behaves identically to the regular has_many, except adds the option <tt>:attributes</tt>, which, if true, creates
+      # a method called association_id_attributes (i.e. task_attributes, or comment_attributes) for setting the attributes
+      # of a collection of associated models.
+      #
+      # The format is as follows:
+      #
+      #     @project.task_attributes = {
+      #       @project.tasks.first.id => {:title => "A new title for an existing task"},
+      #       :new => {
+      #         "0" => {:title => "A new task"}
+      #       }
+      #     }
+      #
+      # Any existing tasks that are not present in the attributes hash will be removed from the association when the (parent) model
+      # is saved.
+      #
       def has_many_with_association_option(association_id, options = {}, &extension)
         unless (config = options.delete(:attributes)).nil?
           self.managed_association_attributes << association_id
