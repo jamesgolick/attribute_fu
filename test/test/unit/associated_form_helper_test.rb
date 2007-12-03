@@ -129,7 +129,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       
       _erbout = ''
       fields_for(:photo) do |f|
-        f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true})
+        f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true}, :partial => 'comment')
         _erbout.concat f.add_associated_link("Add Comment", comment)
       end
       
@@ -167,7 +167,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       
       _erbout = ''
       fields_for(:photo) do |f|
-        f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true})
+        f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true}, :partial => 'some_other_partial')
         _erbout.concat f.add_associated_link("Add Comment", comment, :container => 'something_comments', :partial => 'some_other_partial')
       end
       

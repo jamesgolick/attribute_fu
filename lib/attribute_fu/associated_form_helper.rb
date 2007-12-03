@@ -85,7 +85,7 @@ module AttributeFu
       
       @template.link_to_function name do |page|
         page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
-        page << "new Insertion.Bottom('#{container}', new Template("+form_builder.render_associated_form(object, :fields_for => { :javascript => true }).to_json+").evaluate({'number': --#{variable}}))"
+        page << "new Insertion.Bottom('#{container}', new Template("+form_builder.render_associated_form(object, :fields_for => { :javascript => true }, :partial => partial).to_json+").evaluate({'number': --#{variable}}))"
       end
     end
     
