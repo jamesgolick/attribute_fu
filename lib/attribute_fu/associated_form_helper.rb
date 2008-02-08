@@ -72,9 +72,10 @@ module AttributeFu
     # Options are:
     # * <tt>:partial</tt>    - specify the name of the partial in which the form is located.
     # * <tt>:container</tt>  - specify the DOM id of the container in which to insert the new element.
+    # * <tt>:name</tt>       - specify an alternate class name for the associated model (underscored)
     #
     def add_associated_link(name, object, opts = {})
-      associated_name  = object.class.name.underscore
+      associated_name  = opts[:name] || object.class.name.underscore
       variable         = "attribute_fu_#{associated_name}_count"
       
       opts.symbolize_keys!
