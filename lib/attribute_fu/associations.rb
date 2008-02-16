@@ -79,7 +79,12 @@ module AttributeFu
       
       # Behaves identically to the regular has_many, except adds the option <tt>:attributes</tt>, which, if true, creates
       # a method called association_id_attributes (i.e. task_attributes, or comment_attributes) for setting the attributes
-      # of a collection of associated models.
+      # of a collection of associated models. It also adds the option <tt>:discard_if</tt>, which accepts a proc. If the proc
+      # evaluates to true, the child model will be discarded.
+      # 
+      # e.g.
+      #
+      #   :discard_if => proc { |comment| comment.title.blank? }
       #
       # The format is as follows:
       #
