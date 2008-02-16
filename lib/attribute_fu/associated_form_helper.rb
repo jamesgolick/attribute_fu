@@ -20,7 +20,7 @@ module AttributeFu
     #
     def fields_for_associated(associated, *args, &block)
       conf            = args.last.is_a?(Hash) ? args.last : {}
-      associated_name = (conf.delete(:name) || associated.class.name.underscore).to_s
+      associated_name = extract_option_or_class_name(conf, :name, associated)
       name            = associated_base_name associated_name
       
       unless associated.new_record?
@@ -51,7 +51,7 @@ module AttributeFu
     def remove_link(name, *args)
       options = args.extract_options!
 
-      css_selector = options.delete(:selector) || ".#{@object.class.name.underscore}"
+      css_selector = options.delete(:selector) || ".#{@object.class.name.split("::").last.underscore}"
       function     = options.delete(:function) || ""
       
       function << "$(this).up(&quot;#{css_selector}&quot;).remove()"
@@ -77,7 +77,7 @@ module AttributeFu
     # Any additional options are forwarded to link_to_function. See its documentation for available options.
     #
     def add_associated_link(name, object, opts = {})
-      associated_name  = opts.delete(:name) || object.class.name.underscore
+      associated_name  = extract_option_or_class_name(opts, :name, object)
       variable         = "attribute_fu_#{associated_name}_count"
       
       opts.symbolize_keys!
@@ -114,7 +114,7 @@ module AttributeFu
       (opts[:new] - associated.select(&:new_record?).length).times { associated.build } if opts[:new]
 
       unless associated.empty?
-        name              = (opts[:name]   || associated.first.class.name.underscore).to_s
+        name              = extract_option_or_class_name(opts, :name, associated.first)
         partial           = opts[:partial] || name
         local_assign_name = partial.split('/').last.split('.').first
 
@@ -129,6 +129,10 @@ module AttributeFu
     private
       def associated_base_name(associated_name)
         "#{@object_name}[#{associated_name}_attributes]"
+      end
+      
+      def extract_option_or_class_name(hash, option, object)
+        (hash.delete(option) || object.class.name.split('::').last.underscore).to_s
       end
   end
 end
