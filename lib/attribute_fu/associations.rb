@@ -7,7 +7,7 @@ module AttributeFu
         class << self; alias_method_chain :has_many, :association_option; end
         
         class_inheritable_accessor  :managed_association_attributes
-        write_inheritable_attribute :managed_association_attributes, []
+        write_inheritable_attribute :managed_association_attributes, {}
         
         after_update :save_managed_associations
       end
@@ -16,7 +16,7 @@ module AttributeFu
     def method_missing(method_name, *args) #:nodoc:
       if method_name.to_s =~ /.+?\_attributes=/
         association_name = method_name.to_s.gsub '_attributes=', ''
-        association      = managed_association_attributes.detect { |element| element == association_name.to_sym } || managed_association_attributes.detect { |element| element == association_name.pluralize.to_sym }
+        association      = managed_association_attributes.keys.detect { |element| element == association_name.to_sym } || managed_association_attributes.keys.detect { |element| element == association_name.pluralize.to_sym }
         
         unless association.nil?
           has_many_attributes association, args.first
@@ -51,10 +51,16 @@ module AttributeFu
           object = association.detect { |associated| associated.id.to_s == id }
           object.attributes = object_attrs unless object.nil?
         end
+        
+        # discard blank attributes if discard_if proc exists
+        unless (discard = managed_association_attributes[association_id][:discard_if]).nil?
+          association.reject! { |object| object.new_record? && discard.call(object) }
+          association.delete(*association.select { |object| discard.call(object) })
+        end
       end
       
       def save_managed_associations #:nodoc:
-        managed_association_attributes.each do |association_id|
+        managed_association_attributes.keys.each do |association_id|
           association = send(association_id)
           association.each(&:save)
           
@@ -89,7 +95,8 @@ module AttributeFu
       #
       def has_many_with_association_option(association_id, options = {}, &extension)
         unless (config = options.delete(:attributes)).nil?
-          self.managed_association_attributes << association_id
+          managed_association_attributes[association_id] = {}
+          managed_association_attributes[association_id][:discard_if] = options.delete(:discard_if) if options.has_key?(:discard_if)
         end
         
         has_many_without_association_option(association_id, options, &extension)
