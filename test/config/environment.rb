@@ -1,5 +1,5 @@
 $:.reject! { |e| e.include? 'TextMate' }
-RAILS_GEM_VERSION = '1.99.0' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.0.2' unless defined? RAILS_GEM_VERSION
 
 require File.join(File.dirname(__FILE__), 'boot')
 
