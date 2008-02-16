@@ -101,7 +101,11 @@ module AttributeFu
       def has_many_with_association_option(association_id, options = {}, &extension)
         unless (config = options.delete(:attributes)).nil?
           managed_association_attributes[association_id] = {}
-          managed_association_attributes[association_id][:discard_if] = options.delete(:discard_if) if options.has_key?(:discard_if)
+          if options.has_key?(:discard_if)
+            discard_if = options.delete(:discard_if)
+            discard_if = discard_if.to_proc if discard_if.is_a?(Symbol)
+            managed_association_attributes[association_id][:discard_if] = discard_if
+          end
         end
         
         has_many_without_association_option(association_id, options, &extension)

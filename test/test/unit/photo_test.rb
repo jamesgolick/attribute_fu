@@ -71,17 +71,7 @@ class PhotoTest < ActiveSupport::TestCase
       
       context "with discard_if => proc { }" do
         setup do
-          Photo.class_eval do
-            has_many :comments, :attributes => true, :discard_if => proc { |comment| comment.author.blank? && comment.body.blank? }
-          end
-          
-          create_photo_and_children
-          
-          
-          @photo.comment_attributes = { @gob.id.to_s => { :author => "Buster Bluth", :body => "I said it was _our_ nausia..." },
-                                        @bob.id.to_s => { :author => '', :body => '' },
-                                        :new         => { "0" => { :author => "", :body => "" }}}
-          @photo.save
+          create_photo_with_discard(proc { |comment| comment.author.blank? && comment.body.blank? })
         end
         
         teardown do
@@ -90,6 +80,26 @@ class PhotoTest < ActiveSupport::TestCase
           end
         end
 
+        should "discard any child objects for which discard_if evaluates to true" do
+          assert !@photo.comments.any? { |comment| comment.author.blank? && comment.body.blank? }, @photo.comments.inspect
+        end
+        
+        should "not discard other objects" do
+          assert_equal 1, @photo.comments.length
+        end
+      end
+      
+      context "with discard_if => :symbol" do
+        setup do
+          create_photo_with_discard(:blank?)
+        end
+        
+        teardown do
+          Photo.class_eval do
+            managed_association_attributes[:comments].delete(:discard_if)
+          end
+        end
+        
         should "discard any child objects for which discard_if evaluates to true" do
           assert !@photo.comments.any? { |comment| comment.author.blank? && comment.body.blank? }, @photo.comments.inspect
         end
@@ -121,5 +131,19 @@ class PhotoTest < ActiveSupport::TestCase
       @photo = Photo.create
       @gob = @photo.comments.create :author => "Gob Bluth",  :body => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed..."
       @bob = @photo.comments.create :author => "Bob Loblaw", :body => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed..."
+    end
+    
+    def create_photo_with_discard(discard_if)
+      Photo.class_eval do
+        has_many :comments, :attributes => true, :discard_if => discard_if
+      end
+      
+      create_photo_and_children
+      
+      
+      @photo.comment_attributes = { @gob.id.to_s => { :author => "Buster Bluth", :body => "I said it was _our_ nausia..." },
+                                    @bob.id.to_s => { :author => '', :body => '' },
+                                    :new         => { "0" => { :author => "", :body => "" }}}
+      @photo.save
     end
 end
