@@ -74,17 +74,19 @@ module AttributeFu
     # * <tt>:container</tt>  - specify the DOM id of the container in which to insert the new element.
     # * <tt>:name</tt>       - specify an alternate class name for the associated model (underscored)
     #
+    # Any additional options are forwarded to link_to_function. See its documentation for available options.
+    #
     def add_associated_link(name, object, opts = {})
-      associated_name  = opts[:name] || object.class.name.underscore
+      associated_name  = opts.delete(:name) || object.class.name.underscore
       variable         = "attribute_fu_#{associated_name}_count"
       
       opts.symbolize_keys!
-      partial          = opts[:partial]   || associated_name
-      container        = opts[:container] || associated_name.pluralize
+      partial          = opts.delete(:partial)   || associated_name
+      container        = opts.delete(:container) || associated_name.pluralize
       
       form_builder     = self # because the value of self changes in the block
       
-      @template.link_to_function name do |page|
+      @template.link_to_function(name, opts) do |page|
         page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
         page << "new Insertion.Bottom('#{container}', new Template("+form_builder.render_associated_form(object, :fields_for => { :javascript => true }, :partial => partial).to_json+").evaluate({'number': --#{variable}}))"
       end

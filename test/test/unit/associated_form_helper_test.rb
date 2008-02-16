@@ -130,7 +130,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       _erbout = ''
       fields_for(:photo) do |f|
         f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true}, :partial => 'comment')
-        _erbout.concat f.add_associated_link("Add Comment", comment)
+        _erbout.concat f.add_associated_link("Add Comment", comment, :class => 'something')
       end
       
       @erbout = _erbout
@@ -153,10 +153,14 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       assert_match "attribute_fu_comment_count", @erbout
     end
     
+    should "pass along the additional options to the link_to_function call" do
+      assert_match 'class="something"', @erbout
+    end
+    
     should "produce the following link" do
       # this is a way of testing the whole link
       assert_equal %{
-        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('comments', new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
+        <a class=\"something\" href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom('comments', new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
       }.strip, @erbout
     end
   end
