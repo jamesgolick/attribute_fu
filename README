@@ -77,6 +77,27 @@ Creating the add button is equally simple. The add_associated_link helper will d
   
 That's all you have to do to create a multi-model form with attribute_fu!
 
+== Discarding Blank Child Models
+
+If you want to show a bunch of blank child model forms at the bottom of your form, but you only want to save the ones that are filled out, you can use the discard_if option. It accepts either a proc:
+
+  class Project < ActiveRecord::Base
+    has_many :tasks, :attributes => true, :discard_if => proc { |task| task.title.blank? }
+  end
+
+...or a symbol...
+
+  class Project < ActiveRecord::Base
+    has_many :tasks, :attributes => true, :discard_if => :blank?
+  end
+  
+  class Task < ActiveRecord::Base
+    def blank?
+      title.blank?
+    end
+  end
+
+Using a symbol allows you to keep code DRYer if you are using that routine in more than one place. Both of those examples, however, would have the same effect.
 
 = Updates
 
