@@ -203,6 +203,44 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
   end
   
+  context "add associated link with expression parameter" do
+    setup do
+      comment = @photo.comments.build
+      
+      _erbout = ''
+      fields_for(:photo) do |f|
+        f.stubs(:render_associated_form).with(comment, :fields_for => {:javascript => true}, :partial => 'some_other_partial')
+        _erbout.concat f.add_associated_link("Add Comment", comment, :expression => '$(this).up(".something_comments")', :partial => 'some_other_partial')
+      end
+      
+      @erbout = _erbout
+    end
+
+    should "create link" do
+      assert_match ">Add Comment</a>", @erbout
+    end
+    
+    should "use the javascript expression provided instead of passing the ID in" do
+      assert_match "Insertion.Bottom($(this).up(&quot;.something_comments&quot;)", @erbout
+    end
+    
+    should "wrap the partial in a prototype template" do
+      assert_match "new Template", @erbout
+      assert_match "evaluate", @erbout
+    end
+    
+    should "name the variable correctly" do
+      assert_match "attribute_fu_comment_count", @erbout
+    end
+    
+    should "produce the following link" do
+      # this is a way of testing the whole link
+      assert_equal %{
+        <a href=\"#\" onclick=\"if (typeof attribute_fu_comment_count == 'undefined') attribute_fu_comment_count = 0;\nnew Insertion.Bottom($(this).up(&quot;.something_comments&quot;), new Template(null).evaluate({'number': --attribute_fu_comment_count})); return false;\">Add Comment</a>
+      }.strip, @erbout
+    end    
+  end
+  
   context "render_associated_form" do
     setup do
       comment = @photo.comments.build

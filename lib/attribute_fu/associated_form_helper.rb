@@ -72,6 +72,7 @@ module AttributeFu
     # Options are:
     # * <tt>:partial</tt>    - specify the name of the partial in which the form is located.
     # * <tt>:container</tt>  - specify the DOM id of the container in which to insert the new element.
+    # * <tt>:expression</tt> - specify a javascript expression with which to select the container to insert the new form in to (i.e. $(this).up('.tasks'))
     # * <tt>:name</tt>       - specify an alternate class name for the associated model (underscored)
     #
     # Any additional options are forwarded to link_to_function. See its documentation for available options.
@@ -81,14 +82,14 @@ module AttributeFu
       variable         = "attribute_fu_#{associated_name}_count"
       
       opts.symbolize_keys!
-      partial          = opts.delete(:partial)   || associated_name
-      container        = opts.delete(:container) || associated_name.pluralize
+      partial          = opts.delete(:partial)    || associated_name
+      container        = opts.delete(:expression) || "'#{opts.delete(:container) || associated_name.pluralize}'"
       
       form_builder     = self # because the value of self changes in the block
       
       @template.link_to_function(name, opts) do |page|
         page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
-        page << "new Insertion.Bottom('#{container}', new Template("+form_builder.render_associated_form(object, :fields_for => { :javascript => true }, :partial => partial).to_json+").evaluate({'number': --#{variable}}))"
+        page << "new Insertion.Bottom(#{container}, new Template("+form_builder.render_associated_form(object, :fields_for => { :javascript => true }, :partial => partial).to_json+").evaluate({'number': --#{variable}}))"
       end
     end
     
