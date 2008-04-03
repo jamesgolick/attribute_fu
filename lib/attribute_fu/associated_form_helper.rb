@@ -28,7 +28,7 @@ module AttributeFu
       else
         @new_objects ||= {}
         @new_objects[associated_name] ||= -1 # we want naming to start at 0
-        identifier = !conf.nil? && conf[:javascript] ? '#{number}' : @new_objects[associated_name]+=1
+        identifier = !conf.nil? && conf[:javascript] ? '${number}' : @new_objects[associated_name]+=1
         
         name << "[new][#{identifier}]"
       end
@@ -83,14 +83,14 @@ module AttributeFu
       
       opts.symbolize_keys!
       partial          = opts.delete(:partial)    || associated_name
-      container        = opts.delete(:expression) || "'#{opts.delete(:container) || associated_name.pluralize}'"
+      container        = opts.delete(:expression) || "'#{opts.delete(:container) || '#'+associated_name.pluralize}'"
       
       form_builder     = self # because the value of self changes in the block
       
-      @template.link_to_function(name, opts) do |page|
-        page << "if (typeof #{variable} == 'undefined') #{variable} = 0;"
-        page << "new Insertion.Bottom(#{container}, new Template("+form_builder.render_associated_form(object, :fields_for => { :javascript => true }, :partial => partial).to_json+").evaluate({'number': --#{variable}}))"
-      end
+      function = "if (typeof #{variable} == 'undefined') #{variable} = 0; 
+                    $(#{container}).append($.template("+[self.render_associated_form(object, :fields_for => { :javascript => true }, :partial => partial)].flatten.first.to_json+"), { number: --#{variable}});"
+                    
+      @template.link_to_function(name, function, opts)
     end
     
     # Renders the form of an associated object, wrapping it in a fields_for_associated call.
