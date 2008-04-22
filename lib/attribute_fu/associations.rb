@@ -60,13 +60,15 @@ module AttributeFu
       end
       
       def save_managed_associations #:nodoc:
-        managed_association_attributes.keys.each do |association_id|
-          association = send(association_id)
-          association.each(&:save)
-          
-          unless (objects_to_remove = instance_variable_get removal_variable_name(association_id)).nil?
-            objects_to_remove.each { |remove_id| association.delete association.detect { |obj| obj.id.to_s == remove_id.to_s } }
-            instance_variable_set removal_variable_name(association_id), nil
+        if managed_association_attributes != nil
+          managed_association_attributes.keys.each do |association_id|
+            association = send(association_id)
+            association.each(&:save)
+
+            unless (objects_to_remove = instance_variable_get removal_variable_name(association_id)).nil?
+              objects_to_remove.each { |remove_id| association.delete association.detect { |obj| obj.id.to_s == remove_id.to_s } }
+              instance_variable_set removal_variable_name(association_id), nil
+            end
           end
         end
       end
