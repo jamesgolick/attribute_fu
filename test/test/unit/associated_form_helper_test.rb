@@ -76,7 +76,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "infer the name of the current @object in fields_for" do
-        assert_match "$(this).up(&quot;.comment&quot;).remove()", @erbout
+        assert_match "$(this).up('.comment').remove()", @erbout
       end
     end
     
@@ -86,7 +86,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "use the alternate selector" do
-        assert_match "$(this).up(&quot;.blah&quot;).remove()", @erbout
+        assert_match "$(this).up('.blah').remove()", @erbout
       end
     end
     
@@ -97,7 +97,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "still infer the name of the current @object in fields_for, and create the function as usual" do
-        assert_match "$(this).up(&quot;.comment&quot;).remove()", @erbout
+        assert_match "$(this).up('.comment').remove()", @erbout
       end
       
       should "append the secondary function" do
