@@ -76,7 +76,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "infer the name of the current @object in fields_for" do
-        assert_match "$(this).parent(&quot;.comment&quot;).remove()", @erbout
+        assert_match "$(this).parents(&quot;.comment&quot;).remove()", @erbout
       end
     end
     
@@ -86,7 +86,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "use the alternate selector" do
-        assert_match "$(this).parent(&quot;.blah&quot;).remove()", @erbout
+        assert_match "$(this).parents(&quot;.blah&quot;).remove()", @erbout
       end
     end
     
@@ -97,7 +97,7 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
       end
 
       should "still infer the name of the current @object in fields_for, and create the function as usual" do
-        assert_match "$(this).parent(&quot;.comment&quot;).remove()", @erbout
+        assert_match "$(this).parents(&quot;.comment&quot;).remove()", @erbout
       end
       
       should "append the secondary function" do
