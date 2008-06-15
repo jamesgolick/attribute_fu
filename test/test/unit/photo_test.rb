@@ -69,6 +69,17 @@ class PhotoTest < ActiveSupport::TestCase
         end
       end
       
+      context "with comment_attributes unset" do
+        setup do
+          @photo.reload
+          @photo.save
+        end
+
+        should "not load the comments" do
+          assert !@photo.comments.loaded?, "comments were loaded unnecessarily: #{@photo.comments.inspect}"
+        end
+      end
+      
       context "with discard_if => proc { }" do
         setup do
           create_photo_with_discard(proc { |comment| comment.author.blank? && comment.body.blank? })
