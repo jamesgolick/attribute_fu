@@ -1,15 +1,9 @@
 development:
-  adapter: mysql
-  encoding: utf8
-  database: attribute_fu_test
-  username: root
-  password:
-  socket: /tmp/mysql.sock
-  
+  adapter: sqlite3
+  database: db/development.sqlite3
+  timeout: 5000
+
 test:
-  adapter: mysql
-  encoding: utf8
-  database: attribute_fu_test
-  username: root
-  password:
-  socket: /tmp/mysql.sock
+  adapter: sqlite3
+  database: db/test.sqlite3
+  timeout: 5000
