@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name         = "attribute_fu"
-  s.version      = "0.2"
+  s.version      = "0.2.1"
   s.date         = "2008-08-04"
   s.summary      = "rails multi-model forms made easy!"
   s.email        = "james@giraffesoft.ca"
