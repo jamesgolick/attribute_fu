@@ -114,10 +114,20 @@ module AttributeFu
             discard_if = discard_if.to_proc if discard_if.is_a?(Symbol)
             managed_association_attributes[association_id][:discard_if] = discard_if
           end
+          collection_with_attributes_writer(association_id)
         end
         
         has_many_without_association_option(association_id, options, &extension)
       end
+      
+    private
+    
+      def collection_with_attributes_writer(association_name)
+        define_method("#{association_name.to_s.singularize}_attributes=") do |attributes|
+          has_many_attributes association_name, attributes
+        end
+      end
+      
     end
     
   end # Associations
