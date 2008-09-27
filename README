@@ -105,6 +105,12 @@ Come join the discussion on the {mailing list}[link:http://groups.google.com/gro
 
 Updates will be available {here}[http://jamesgolick.com/attribute_fu]
 
+= Running the tests
+
+To run the tests, you need Shoulda and the multi-rails:
+
+  $ sudo gem install thoughtbot-shoulda --source http://gems.github.com/
+  $ sudo gem install multi_rails
 
 == Credits
 

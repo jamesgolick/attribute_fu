@@ -1,6 +1,6 @@
 sqlite3:
   adapter: sqlite3
-  dbfile: awesome_nested_set.sqlite3.db
+  dbfile: attribute_fu.sqlite3.db
 sqlite3mem:
   :adapter: sqlite3
   :dbfile: ":memory:"
@@ -8,11 +8,11 @@ postgresql:
   :adapter: postgresql
   :username: postgres
   :password: postgres
-  :database: awesome_nested_set_plugin_test
+  :database: attribute_fu_plugin_test
   :min_messages: ERROR
 mysql:
   :adapter: mysql
   :host: localhost
   :username: root
   :password:
-  :database: awesome_nested_set_plugin_test
+  :database: attribute_fu_plugin_test
