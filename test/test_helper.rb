@@ -6,6 +6,7 @@ require 'multi_rails_init'
 require 'active_record' 
 require 'action_view'
 require 'test/unit'
+require 'mocha'
 require 'shoulda/rails'
 
 require 'attribute_fu'

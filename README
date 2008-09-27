@@ -107,10 +107,10 @@ Updates will be available {here}[http://jamesgolick.com/attribute_fu]
 
 = Running the tests
 
-To run the tests, you need Shoulda and the multi-rails:
+To run the tests, you need Shoulda, mocha and multi-rails:
 
   $ sudo gem install thoughtbot-shoulda --source http://gems.github.com/
-  $ sudo gem install multi_rails
+  $ sudo gem install mocha multi_rails
 
 == Credits
 
