@@ -5,7 +5,7 @@ Creating multi-model forms is amazingly easy with AttributeFu.
 
 = Get It!
 
-  $ piston import http://svn.jamesgolick.com/attribute_fu/tags/stable vendor/plugins/attribute_fu
+  $ script/plugin install git://github.com/giraffesoft/attribute_fu.git
 
 = Conventions
 
