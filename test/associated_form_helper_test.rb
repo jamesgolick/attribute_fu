@@ -1,4 +1,4 @@
-require File.dirname(__FILE__)+'/../test_helper'
+require File.dirname(__FILE__)+'/test_helper'
 
 class AssociatedFormHelperTest < Test::Unit::TestCase
   include ActionView::Helpers::FormHelper
@@ -203,7 +203,6 @@ class AssociatedFormHelperTest < Test::Unit::TestCase
     end
   end
   
-  # context "add associated link with expression parameter" do
   #   setup do
   #     comment = @photo.comments.build
   #     
